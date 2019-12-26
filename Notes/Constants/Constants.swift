@@ -11,9 +11,10 @@ import UIKit
 
 struct UIConstants {
 
-    public static let sidePadding: CGFloat = 12
+    public static let sidePadding: CGFloat = 20
     public static let verticalPadding: CGFloat = 12
     public static let betweenPadding: CGFloat = 4
+    public static let labelHeight: CGFloat = 44
     public static let buttonHeight: CGFloat = 44
     public static let cornerRadius: CGFloat = 8
     public static let iconSize: CGSize = .init(width: 24, height: 24)

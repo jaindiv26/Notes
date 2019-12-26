@@ -24,6 +24,20 @@
 		FC8085C423B2142900B54C8F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C323B2142900B54C8F /* Constants.swift */; };
 		FC8085C523B2142900B54C8F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C323B2142900B54C8F /* Constants.swift */; };
 		FC8085C623B2142900B54C8F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C323B2142900B54C8F /* Constants.swift */; };
+		FC8085C823B2415300B54C8F /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C723B2415300B54C8F /* HomeViewCell.swift */; };
+		FC8085C923B2415300B54C8F /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C723B2415300B54C8F /* HomeViewCell.swift */; };
+		FC8085CA23B2415300B54C8F /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C723B2415300B54C8F /* HomeViewCell.swift */; };
+		FC8085CB23B2415D00B54C8F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80858623B1F9B900B54C8F /* HomeViewController.swift */; };
+		FC8085CC23B2415D00B54C8F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80858623B1F9B900B54C8F /* HomeViewController.swift */; };
+		FC8085CF23B2456A00B54C8F /* AddNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */; };
+		FC8085D023B2456A00B54C8F /* AddNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */; };
+		FC8085D123B2456A00B54C8F /* AddNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */; };
+		FC8085D423B29CE400B54C8F /* NoteModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D323B29CE400B54C8F /* NoteModal.swift */; };
+		FC8085D523B29CE400B54C8F /* NoteModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D323B29CE400B54C8F /* NoteModal.swift */; };
+		FC8085D623B29CE400B54C8F /* NoteModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D323B29CE400B54C8F /* NoteModal.swift */; };
+		FC8085D823B29D6500B54C8F /* TagModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D723B29D6500B54C8F /* TagModal.swift */; };
+		FC8085D923B29D6500B54C8F /* TagModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D723B29D6500B54C8F /* TagModal.swift */; };
+		FC8085DA23B29D6500B54C8F /* TagModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D723B29D6500B54C8F /* TagModal.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +75,10 @@
 		FC8085B923B2014000B54C8F /* HomeViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewPresenter.swift; sourceTree = "<group>"; };
 		FC8085BE23B201FC00B54C8F /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		FC8085C323B2142900B54C8F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		FC8085C723B2415300B54C8F /* HomeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewCell.swift; sourceTree = "<group>"; };
+		FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteViewController.swift; sourceTree = "<group>"; };
+		FC8085D323B29CE400B54C8F /* NoteModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModal.swift; sourceTree = "<group>"; };
+		FC8085D723B29D6500B54C8F /* TagModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +129,7 @@
 		FC80858123B1F9B900B54C8F /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				FC8085CD23B2454300B54C8F /* Add Note */,
 				FC8085C223B2141300B54C8F /* Constants */,
 				FC8085BD23B201E800B54C8F /* Common */,
 				FC8085B523B1FA3C00B54C8F /* Main */,
@@ -145,9 +164,9 @@
 		FC8085B523B1FA3C00B54C8F /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				FC8085D223B29CC400B54C8F /* Modal */,
 				FC8085B723B2011800B54C8F /* Presenter */,
 				FC8085B623B2011100B54C8F /* View */,
-				FC80858623B1F9B900B54C8F /* HomeViewController.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -155,6 +174,8 @@
 		FC8085B623B2011100B54C8F /* View */ = {
 			isa = PBXGroup;
 			children = (
+				FC8085C723B2415300B54C8F /* HomeViewCell.swift */,
+				FC80858623B1F9B900B54C8F /* HomeViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -181,6 +202,23 @@
 				FC8085C323B2142900B54C8F /* Constants.swift */,
 			);
 			path = Constants;
+			sourceTree = "<group>";
+		};
+		FC8085CD23B2454300B54C8F /* Add Note */ = {
+			isa = PBXGroup;
+			children = (
+				FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */,
+			);
+			path = "Add Note";
+			sourceTree = "<group>";
+		};
+		FC8085D223B29CC400B54C8F /* Modal */ = {
+			isa = PBXGroup;
+			children = (
+				FC8085D323B29CE400B54C8F /* NoteModal.swift */,
+				FC8085D723B29D6500B54C8F /* TagModal.swift */,
+			);
+			path = Modal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,8 +352,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC80858723B1F9B900B54C8F /* HomeViewController.swift in Sources */,
+				FC8085C823B2415300B54C8F /* HomeViewCell.swift in Sources */,
+				FC8085CF23B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
+				FC8085D423B29CE400B54C8F /* NoteModal.swift in Sources */,
 				FC80858323B1F9B900B54C8F /* AppDelegate.swift in Sources */,
 				FC80858523B1F9B900B54C8F /* SceneDelegate.swift in Sources */,
+				FC8085D823B29D6500B54C8F /* TagModal.swift in Sources */,
 				FC80858D23B1F9B900B54C8F /* Notes.xcdatamodeld in Sources */,
 				FC8085C423B2142900B54C8F /* Constants.swift in Sources */,
 				FC8085BA23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
@@ -327,10 +369,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8085D023B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
+				FC8085D923B29D6500B54C8F /* TagModal.swift in Sources */,
 				FC8085BB23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
 				FC80859D23B1F9C000B54C8F /* NotesTests.swift in Sources */,
+				FC8085C923B2415300B54C8F /* HomeViewCell.swift in Sources */,
 				FC8085C023B201FC00B54C8F /* BaseViewController.swift in Sources */,
+				FC8085D523B29CE400B54C8F /* NoteModal.swift in Sources */,
 				FC8085C523B2142900B54C8F /* Constants.swift in Sources */,
+				FC8085CC23B2415D00B54C8F /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,10 +385,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8085D123B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
+				FC8085DA23B29D6500B54C8F /* TagModal.swift in Sources */,
 				FC8085BC23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
 				FC8085A823B1F9C000B54C8F /* NotesUITests.swift in Sources */,
+				FC8085CA23B2415300B54C8F /* HomeViewCell.swift in Sources */,
 				FC8085C123B201FC00B54C8F /* BaseViewController.swift in Sources */,
+				FC8085D623B29CE400B54C8F /* NoteModal.swift in Sources */,
 				FC8085C623B2142900B54C8F /* Constants.swift in Sources */,
+				FC8085CB23B2415D00B54C8F /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
