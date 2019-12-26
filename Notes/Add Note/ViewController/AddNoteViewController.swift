@@ -14,6 +14,8 @@ class AddNoteViewController: BaseViewController {
     
     private var noteModal: NoteModal?
     
+    private lazy var presenter = AddNotesPresenter(with: self)
+    
     private lazy var titleTextField: UITextField = {
         let view = UITextField(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -40,6 +42,23 @@ class AddNoteViewController: BaseViewController {
         return view
     }()
     
+    private var shouldUpdate = false
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init(modal: NoteModal) {
+        super.init(nibName: nil, bundle: nil)
+        noteModal = modal
+        shouldUpdate = true
+        self.initData()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,48 +76,31 @@ private extension AddNoteViewController {
         self.navigationItem.rightBarButtonItem  = doneBarButtonItem
     }
     
-    @objc func doneEditing(){
+    @objc func doneEditing() {
         guard let data = isValidData() else {
             return
         }
         
-        saveNote(note: NoteModal(noteTitle: data.title, noteDescription: data.description))
-
-        self.navigationController?.popViewController(animated: true)
+        if shouldUpdate {
+            presenter.saveNote(note: NoteModal(
+                noteId: noteModal!.noteId,
+                noteTitle: data.title,
+                noteDescription: data.description,
+                dateCreated: noteModal!.dateCreated,
+                dateModified: Date())
+            )
+        } else {
+            presenter.addNewNote(note: NoteModal(noteTitle: data.title, noteDescription: data.description))
+        }
     }
     
-    func saveNote(note: NoteModal) {
-        
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
+    func initData() {
+        guard let noteData = noteModal else {
+            return
         }
-        
-        // 1
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        
-        // 2
-        let entity =
-            NSEntityDescription.entity(forEntityName: "Notes",
-                                       in: managedContext)!
-        
-        let noteEntity = NSManagedObject(entity: entity,
-                                     insertInto: managedContext)
-        
-        // 3
-        noteEntity.setValue(note.noteId, forKey: "id")
-        noteEntity.setValue(note.noteTitle, forKey: "title")
-        noteEntity.setValue(note.noteDescription, forKey: "note_description")
-        noteEntity.setValue(note.dateCreated, forKey: "date_created")
-        noteEntity.setValue(note.dateModified, forKey: "date_modified")
-        
-        // 4
-        do {
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
+        titleTextField.text = noteData.noteTitle
+        descriptionTextView.text = noteData.noteDescription
+        shouldUpdate = true
     }
     
     func isValidData() -> (title: String, description: String)? {
@@ -142,7 +144,6 @@ extension AddNoteViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if descriptionTextView.textColor == UIColor.lightGray {
             descriptionTextView.text = nil
-            descriptionTextView.textColor = UIColor.black
         }
     }
     
@@ -159,7 +160,6 @@ extension AddNoteViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if titleTextField.textColor == UIColor.lightGray {
             titleTextField.text = nil
-            titleTextField.textColor = UIColor.black
         }
     }
     
@@ -168,5 +168,11 @@ extension AddNoteViewController: UITextFieldDelegate {
             titleTextField.text = "Enter your title here."
             titleTextField.textColor = UIColor.lightGray
         }
+    }
+}
+
+extension AddNoteViewController: AddNotesView {
+    func dismissView() {
+        self.navigationController?.popViewController(animated: true)
     }
 }

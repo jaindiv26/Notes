@@ -24,11 +24,11 @@ class HomeViewController: BaseViewController {
         tableView.keyboardDismissMode = .onDrag
         return tableView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
-
+        
         initNavigationBar()
         setTableView()
     }
@@ -48,10 +48,10 @@ extension HomeViewController {
                                        constant: UIConstants.verticalPadding).isActive = true
         tableView.bottomAnchor.constraint(equalTo: safeAreaGuide!.bottomAnchor).isActive = true
         tableView.backgroundColor = .systemBackground
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(HomeViewCell.self,
                            forCellReuseIdentifier: HomeViewCell.self.description())
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
     private func initNavigationBar() {
@@ -81,7 +81,7 @@ extension HomeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let item = presenter.getItem(forRow: indexPath.row),
             let cell = tableView.dequeueReusableCell(withIdentifier: HomeViewCell.self.description(),
-                                                    for: indexPath) as? HomeViewCell {
+                                                     for: indexPath) as? HomeViewCell {
             cell.setData(modal: item)
             return cell
         }
@@ -91,8 +91,23 @@ extension HomeViewController: UITableViewDataSource {
 
 extension HomeViewController: UITableViewDelegate {
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == .delete) {
+            if let item = presenter.getItem(forRow: indexPath.row) {
+                presenter.deleteNote(note: item, index: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
+        }
+    }
+
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        return
+        if let item = presenter.getItem(forRow: indexPath.row) {
+            navigationController?.pushViewController(AddNoteViewController.init(modal: item), animated: true)
+        }
     }
 }
 

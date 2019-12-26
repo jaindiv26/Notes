@@ -38,6 +38,9 @@
 		FC8085D823B29D6500B54C8F /* TagModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D723B29D6500B54C8F /* TagModal.swift */; };
 		FC8085D923B29D6500B54C8F /* TagModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D723B29D6500B54C8F /* TagModal.swift */; };
 		FC8085DA23B29D6500B54C8F /* TagModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085D723B29D6500B54C8F /* TagModal.swift */; };
+		FC8085E323B4C54100B54C8F /* AddNotesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085E223B4C54100B54C8F /* AddNotesPresenter.swift */; };
+		FC8085E423B4C54100B54C8F /* AddNotesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085E223B4C54100B54C8F /* AddNotesPresenter.swift */; };
+		FC8085E523B4C54100B54C8F /* AddNotesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085E223B4C54100B54C8F /* AddNotesPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +82,7 @@
 		FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteViewController.swift; sourceTree = "<group>"; };
 		FC8085D323B29CE400B54C8F /* NoteModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModal.swift; sourceTree = "<group>"; };
 		FC8085D723B29D6500B54C8F /* TagModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModal.swift; sourceTree = "<group>"; };
+		FC8085E223B4C54100B54C8F /* AddNotesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNotesPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,7 +211,8 @@
 		FC8085CD23B2454300B54C8F /* Add Note */ = {
 			isa = PBXGroup;
 			children = (
-				FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */,
+				FC8085E123B4C51600B54C8F /* ViewController */,
+				FC8085E023B4C50200B54C8F /* Presenter */,
 			);
 			path = "Add Note";
 			sourceTree = "<group>";
@@ -219,6 +224,22 @@
 				FC8085D723B29D6500B54C8F /* TagModal.swift */,
 			);
 			path = Modal;
+			sourceTree = "<group>";
+		};
+		FC8085E023B4C50200B54C8F /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				FC8085E223B4C54100B54C8F /* AddNotesPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		FC8085E123B4C51600B54C8F /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */,
+			);
+			path = ViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -351,6 +372,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8085E323B4C54100B54C8F /* AddNotesPresenter.swift in Sources */,
 				FC80858723B1F9B900B54C8F /* HomeViewController.swift in Sources */,
 				FC8085C823B2415300B54C8F /* HomeViewCell.swift in Sources */,
 				FC8085CF23B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
@@ -373,6 +395,7 @@
 				FC8085D923B29D6500B54C8F /* TagModal.swift in Sources */,
 				FC8085BB23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
 				FC80859D23B1F9C000B54C8F /* NotesTests.swift in Sources */,
+				FC8085E423B4C54100B54C8F /* AddNotesPresenter.swift in Sources */,
 				FC8085C923B2415300B54C8F /* HomeViewCell.swift in Sources */,
 				FC8085C023B201FC00B54C8F /* BaseViewController.swift in Sources */,
 				FC8085D523B29CE400B54C8F /* NoteModal.swift in Sources */,
@@ -389,6 +412,7 @@
 				FC8085DA23B29D6500B54C8F /* TagModal.swift in Sources */,
 				FC8085BC23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
 				FC8085A823B1F9C000B54C8F /* NotesUITests.swift in Sources */,
+				FC8085E523B4C54100B54C8F /* AddNotesPresenter.swift in Sources */,
 				FC8085CA23B2415300B54C8F /* HomeViewCell.swift in Sources */,
 				FC8085C123B201FC00B54C8F /* BaseViewController.swift in Sources */,
 				FC8085D623B29CE400B54C8F /* NoteModal.swift in Sources */,

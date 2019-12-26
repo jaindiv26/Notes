@@ -17,15 +17,21 @@ protocol HomeView: class {
 class HomeViewPresenter {
     
     weak var view: HomeView?
-    
     private var notesCount = 0
     private var notesList: [NoteModal] = []
+    var managedContext: NSManagedObjectContext?
     
     init(with view: HomeView) {
         self.view = view
+        
+        guard let appDelegate =
+            UIApplication.shared.delegate as? AppDelegate else {
+                return
+        }
+
+        managedContext = appDelegate.persistentContainer.viewContext
         readNotesFromCoreData()
     }
-    
 }
 
 extension HomeViewPresenter {
@@ -34,19 +40,15 @@ extension HomeViewPresenter {
         
         var returnedNotes = [NoteModal]()
         
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
+        guard let context = managedContext else {
+            return
         }
-        
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
         fetchRequest.predicate = nil
         
         do {
-            let fetchedNotesFromCoreData = try managedContext.fetch(fetchRequest)
+            let fetchedNotesFromCoreData = try context.fetch(fetchRequest)
             fetchedNotesFromCoreData.forEach { (fetchRequestResult) in
                 let noteManagedObjectRead = fetchRequestResult as! NSManagedObject
                 returnedNotes.append(NoteModal.init(
@@ -75,5 +77,32 @@ extension HomeViewPresenter {
             return nil
         }
         return notesList[row]
+    }
+    
+    func deleteNote(note: NoteModal, index: Int) {
+        guard let context = managedContext else {
+            return
+        }
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
+        
+        let noteIdPredicate = NSPredicate(format: "id = %@", note.noteId as CVarArg)
+        
+        fetchRequest.predicate = noteIdPredicate
+        
+        do {
+            let fetchedNotesFromCoreData = try context.fetch(fetchRequest)
+            let noteManagedObjectToBeDeleted = fetchedNotesFromCoreData[0] as! NSManagedObject
+            context.delete(noteManagedObjectToBeDeleted)
+            
+            do {
+                try context.save()
+                notesList.remove(at: index)
+            } catch let error as NSError {
+                print("Could not save. \(error), \(error.userInfo)")
+            }
+        } catch let error as NSError {
+            print("Could not change. \(error), \(error.userInfo)")
+        }
     }
 }
