@@ -12,13 +12,16 @@ import UIKit
 
 protocol AddNotesView: class {
     func dismissView()
+    func didAddTag(atIndex index: Int)
+    func didFetchTags()
+    func hideTagsPickerView()
 }
 
 class AddNotesPresenter {
     
     weak var view: AddNotesView?
-    
     var managedContext: NSManagedObjectContext?
+    var tagsList: [String] = []
     
     init(with view: AddNotesView) {
         self.view = view
@@ -35,8 +38,55 @@ class AddNotesPresenter {
 
 extension AddNotesPresenter {
     
-    func addNewNote(title: String, description: String, tags: String) {
+    func getTagsFromDB() {
+        tagsList.removeAll()
         
+        guard let context = managedContext else {
+            return
+        }
+        
+        let tagsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        tagsFetchRequest.predicate = nil
+        
+        do {
+            let fetchedTagsFromCoreData = try context.fetch(tagsFetchRequest)
+            fetchedTagsFromCoreData.forEach { (fetchRequestResult) in
+                let tagManagedObjectRead = fetchRequestResult as! Tag
+                let item = tagManagedObjectRead.value(forKey: "tag") as! String
+                tagsList.append(item)
+            }
+            if (tagsList.count == 0) {
+                view?.hideTagsPickerView()
+                return
+            }
+            view?.didFetchTags()
+        } catch let error as NSError {
+            print("Could not read. \(error), \(error.userInfo)")
+        }
+    }
+    
+    func addTagIntoDB(tag: String) {
+        guard let context = managedContext else {
+            return
+        }
+        
+        let tagEntity = NSEntityDescription.entity(forEntityName: "Tag", in: context)!
+        let newTagsEntity = NSManagedObject(entity: tagEntity, insertInto: context)
+        
+        newTagsEntity.setValue(UUID(), forKey: "tagID")
+        newTagsEntity.setValue(tag, forKey: "tag")
+        newTagsEntity.setValue(UIColor.random.toHex, forKey: "colorHex")
+        
+        do {
+            try context.save()
+            tagsList.append(tag)
+            view?.didAddTag(atIndex: tagsList.count - 1)
+        } catch let error as NSError {
+            print("Could not save. \(error), \(error.userInfo)")
+        }
+    }
+    
+    func addNewNote(title: String, description: String, tags: String) {
         guard let context = managedContext else {
             return
         }
@@ -52,9 +102,9 @@ extension AddNotesPresenter {
         
         newNoteEntity.setValue(UUID(), forKey: "id")
         newNoteEntity.setValue(title, forKey: "title")
-        newNoteEntity.setValue(description, forKey: "note_description")
-        newNoteEntity.setValue(Date(), forKey: "date_created")
-        newNoteEntity.setValue(Date(), forKey: "date_modified")
+        newNoteEntity.setValue(description, forKey: "noteDescription")
+        newNoteEntity.setValue(Date(), forKey: "dateCreated")
+        newNoteEntity.setValue(Date(), forKey: "dateModified")
         newNoteEntity.setValue(newTagsEntity, forKey: "tag")
         
         do {
@@ -81,8 +131,8 @@ extension AddNotesPresenter {
             let noteManagedObjectToBeChanged = fetchedNotesFromCoreData[0] as! NSManagedObject
             
             noteManagedObjectToBeChanged.setValue(title, forKey: "title")
-            noteManagedObjectToBeChanged.setValue(description, forKey: "note_description")
-            noteManagedObjectToBeChanged.setValue(Date(), forKey: "date_modified")
+            noteManagedObjectToBeChanged.setValue(description, forKey: "noteDescription")
+            noteManagedObjectToBeChanged.setValue(Date(), forKey: "dateModified")
             noteManagedObjectToBeChanged.setValue(tags, forKey: "tag")
             try context.save()
             view?.dismissView()

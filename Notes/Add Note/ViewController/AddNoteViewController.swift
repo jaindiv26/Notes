@@ -16,11 +16,27 @@ class AddNoteViewController: BaseViewController {
     
     private lazy var presenter = AddNotesPresenter(with: self)
     
+    private lazy var titleLabel: UILabel = {
+        let view = UILabel(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "TITLE"
+        view.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        return view
+    }()
+    
+    private lazy var titleContainer: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        view.clipsToBounds = true
+        view.layer.cornerRadius = UIConstants.cornerRadius
+        return view
+    }()
+    
     private lazy var titleTextField: UITextField = {
         let view = UITextField(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.text = "Enter your title here."
-        view.textColor = UIColor.lightGray
+        view.textColor = UIColor.white
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         return view
     }()
@@ -28,8 +44,24 @@ class AddNoteViewController: BaseViewController {
     private lazy var tagsLabel: UILabel = {
         let view = UILabel(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.text = "Tags"
-        view.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        view.text = "TAGS"
+        view.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        return view
+    }()
+    
+    private lazy var tagsContainer: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        view.clipsToBounds = true
+        view.layer.cornerRadius = UIConstants.cornerRadius
+        return view
+    }()
+    
+    private lazy var addTagsButton: UIButton = {
+        let view = UIButton(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.setImage(UIImage(systemName: "plus"), for: .normal)
         return view
     }()
     
@@ -44,23 +76,31 @@ class AddNoteViewController: BaseViewController {
     private lazy var descriptionLabel: UILabel = {
         let view = UILabel(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.text = "Description"
-        view.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        view.text = "DESCRIPTION"
+        view.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        return view
+    }()
+    
+    private lazy var descriptionContainer: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        view.clipsToBounds = true
+        view.layer.cornerRadius = UIConstants.cornerRadius
         return view
     }()
     
     private lazy var descriptionTextView: UITextView = {
         let view = UITextView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.text = "Enter your description here."
-        view.textColor = UIColor.lightGray
+        view.textColor = UIColor.white
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        view.backgroundColor = .clear
+        view.textContainerInset = UIEdgeInsets.zero
         return view
     }()
     
     private var shouldUpdate = false
-    
-    private var tags: [String] = ["Red", "Green", "Blue", "Gray"]
     
     private var selectedTag: String = "Red"
     
@@ -85,24 +125,25 @@ class AddNoteViewController: BaseViewController {
         view.backgroundColor = .systemBackground
         initNavigationBar()
         createViews()
+        presenter.getTagsFromDB()
     }
 }
 
 private extension AddNoteViewController {
     
     func initNavigationBar() {
-        navigationItem.title = "Add Title"
-        let doneBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneEditing))
+        navigationItem.largeTitleDisplayMode = .never
+        let doneBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneEditingNote))
         self.navigationItem.rightBarButtonItem  = doneBarButtonItem
     }
     
-    @objc func doneEditing() {
+    @objc func doneEditingNote() {
         guard let data = isValidData() else {
             return
         }
         
         if shouldUpdate {
-            presenter.saveNote(id: noteModal!.id!, title: data.title, description: data.description, tags: "")
+            presenter.saveNote(id: noteModal!.id!, title: data.title, description: data.description, tags: selectedTag)
         } else {
             presenter.addNewNote(title: data.title, description: data.description, tags: selectedTag)
         }
@@ -113,7 +154,7 @@ private extension AddNoteViewController {
             return
         }
         titleTextField.text = noteData.title
-        descriptionTextView.text = noteData.note_description
+        descriptionTextView.text = noteData.noteDescription
         shouldUpdate = true
     }
     
@@ -130,38 +171,83 @@ private extension AddNoteViewController {
     }
     
     func createViews() {
+        guard let safeAreaGuide = safeAreaGuide else {
+            return
+        }
+        view.addSubview(titleLabel)
+        titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor, constant: 2*UIConstants.verticalPadding).isActive = true
         
-        view.addSubview(titleTextField)
-        titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        titleTextField.topAnchor.constraint(equalTo: safeAreaGuide!.topAnchor, constant: UIConstants.verticalPadding).isActive = true
-        titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        titleTextField.heightAnchor.constraint(equalToConstant: UIConstants.buttonHeight).isActive = true
+        view.addSubview(titleContainer)
+        titleContainer.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        titleContainer.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        titleContainer.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: UIConstants.betweenPadding).isActive = true
+        
+        titleContainer.addSubview(titleTextField)
+        titleTextField.leadingAnchor.constraint(equalTo: titleContainer.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        titleTextField.topAnchor.constraint(equalTo: titleContainer.topAnchor, constant: UIConstants.verticalPadding).isActive = true
+        titleTextField.trailingAnchor.constraint(equalTo: titleContainer.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        titleTextField.bottomAnchor.constraint(equalTo: titleContainer.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
         titleTextField.delegate = self
         
         view.addSubview(tagsLabel)
-        tagsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        tagsLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
-        tagsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        tagsLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight).isActive = true
+        tagsLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        tagsLabel.topAnchor.constraint(equalTo: titleContainer.bottomAnchor, constant: 2*UIConstants.verticalPadding).isActive = true
         
-        view.addSubview(tagsPickerView)
-        tagsPickerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        tagsPickerView.topAnchor.constraint(equalTo: tagsLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
-        tagsPickerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        tagsPickerView.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight).isActive = true
+        view.addSubview(addTagsButton)
+        addTagsButton.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        addTagsButton.centerYAnchor.constraint(equalTo: tagsLabel.centerYAnchor).isActive = true
+        addTagsButton.addTarget(self, action: #selector(didTapAddTagsButton), for: .touchUpInside)
+        
+        tagsLabel.trailingAnchor.constraint(equalTo: addTagsButton.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        
+        view.addSubview(tagsContainer)
+        tagsContainer.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        tagsContainer.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        tagsContainer.topAnchor.constraint(equalTo: tagsLabel.bottomAnchor, constant: UIConstants.betweenPadding).isActive = true
+        
+        tagsContainer.addSubview(tagsPickerView)
+        tagsPickerView.leadingAnchor.constraint(equalTo: tagsContainer.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        tagsPickerView.topAnchor.constraint(equalTo: tagsContainer.topAnchor).isActive = true
+        tagsPickerView.trailingAnchor.constraint(equalTo: tagsContainer.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        tagsPickerView.bottomAnchor.constraint(equalTo: tagsContainer.bottomAnchor).isActive = true
+        tagsPickerView.heightAnchor.constraint(equalToConstant: UIConstants.pickerHeight).isActive = true
         
         view.addSubview(descriptionLabel)
-        descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: tagsPickerView.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
-        descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        descriptionLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight).isActive = true
+        descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: tagsContainer.bottomAnchor, constant: 2*UIConstants.verticalPadding).isActive = true
         
-        view.addSubview(descriptionTextView)
-        descriptionTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
-        descriptionTextView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 0).isActive = true
-        descriptionTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        descriptionTextView.bottomAnchor.constraint(equalTo: safeAreaGuide!.bottomAnchor, constant: 0).isActive = true
+        view.addSubview(descriptionContainer)
+        descriptionContainer.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        descriptionContainer.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor).isActive = true
+        descriptionContainer.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: UIConstants.betweenPadding).isActive = true
+        descriptionContainer.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
+        
+        descriptionContainer.addSubview(descriptionTextView)
+        descriptionTextView.leadingAnchor.constraint(equalTo: descriptionContainer.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        descriptionTextView.topAnchor.constraint(equalTo: descriptionContainer.topAnchor, constant: UIConstants.verticalPadding).isActive = true
+        descriptionTextView.trailingAnchor.constraint(equalTo: descriptionContainer.trailingAnchor, constant: -UIConstants.verticalPadding).isActive = true
+        descriptionTextView.bottomAnchor.constraint(equalTo: descriptionContainer.bottomAnchor, constant: -UIConstants.sidePadding).isActive = true
         descriptionTextView.delegate = self
+    }
+    
+    @objc func didTapAddTagsButton() {
+        let alertController = UIAlertController(title: "Add Tag", message: "", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Save", style: .default, handler: { alert -> Void in
+            guard let textField = alertController.textFields?[0] else {
+                return
+            }
+            if let text = textField.text, !text.isEmpty {
+                self.presenter.addTagIntoDB(tag: text)
+            }
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alertController.addTextField(configurationHandler: {(textField : UITextField!) -> Void in
+            textField.placeholder = "Tag name"
+        })
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 
@@ -198,15 +284,32 @@ extension AddNoteViewController: UITextFieldDelegate {
 }
 
 extension AddNoteViewController: AddNotesView {
+    
     func dismissView() {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    func didAddTag(atIndex index: Int) {
+        tagsPickerView.reloadAllComponents()
+        tagsPickerView.selectRow(index, inComponent: 0, animated: true)
+    }
+    
+    func didFetchTags() {
+        tagsPickerView.reloadAllComponents()
+        tagsPickerView.isHidden = false
+    }
+    
+    func hideTagsPickerView() {
+        tagsPickerView.isHidden = true
     }
 }
 
 extension AddNoteViewController: UIPickerViewDelegate {
+    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return tags[row]
+        return presenter.tagsList[row]
     }
+    
 }
 
 extension AddNoteViewController: UIPickerViewDataSource {
@@ -216,11 +319,11 @@ extension AddNoteViewController: UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return tags.count
+        return presenter.tagsList.count
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        selectedTag = tags[row]
+        selectedTag = presenter.tagsList[row]
     }
     
 }

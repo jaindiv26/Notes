@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC454CE223B92D67004D6C1A /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE123B92D67004D6C1A /* FilterViewController.swift */; };
+		FC454CE323B92D67004D6C1A /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE123B92D67004D6C1A /* FilterViewController.swift */; };
+		FC454CE423B92D67004D6C1A /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE123B92D67004D6C1A /* FilterViewController.swift */; };
+		FC454CE923B92EA1004D6C1A /* FilterViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE823B92EA1004D6C1A /* FilterViewPresenter.swift */; };
+		FC454CEA23B92EA1004D6C1A /* FilterViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE823B92EA1004D6C1A /* FilterViewPresenter.swift */; };
+		FC454CEB23B92EA1004D6C1A /* FilterViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE823B92EA1004D6C1A /* FilterViewPresenter.swift */; };
+		FC454CEE23B93DB0004D6C1A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CEC23B93DAF004D6C1A /* Extensions.swift */; };
+		FC454CEF23B93DB0004D6C1A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CEC23B93DAF004D6C1A /* Extensions.swift */; };
+		FC454CF023B93DB0004D6C1A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CEC23B93DAF004D6C1A /* Extensions.swift */; };
+		FC454CF123B93DB0004D6C1A /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CED23B93DAF004D6C1A /* TagView.swift */; };
+		FC454CF223B93DB0004D6C1A /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CED23B93DAF004D6C1A /* TagView.swift */; };
+		FC454CF323B93DB0004D6C1A /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CED23B93DAF004D6C1A /* TagView.swift */; };
+		FC454CF523B93DDB004D6C1A /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CF423B93DDB004D6C1A /* HomeViewCell.swift */; };
+		FC454CF623B93DDB004D6C1A /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CF423B93DDB004D6C1A /* HomeViewCell.swift */; };
+		FC454CF723B93DDB004D6C1A /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CF423B93DDB004D6C1A /* HomeViewCell.swift */; };
 		FC80858323B1F9B900B54C8F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80858223B1F9B900B54C8F /* AppDelegate.swift */; };
 		FC80858523B1F9B900B54C8F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80858423B1F9B900B54C8F /* SceneDelegate.swift */; };
 		FC80858723B1F9B900B54C8F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80858623B1F9B900B54C8F /* HomeViewController.swift */; };
@@ -24,9 +39,6 @@
 		FC8085C423B2142900B54C8F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C323B2142900B54C8F /* Constants.swift */; };
 		FC8085C523B2142900B54C8F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C323B2142900B54C8F /* Constants.swift */; };
 		FC8085C623B2142900B54C8F /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C323B2142900B54C8F /* Constants.swift */; };
-		FC8085C823B2415300B54C8F /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C723B2415300B54C8F /* HomeViewCell.swift */; };
-		FC8085C923B2415300B54C8F /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C723B2415300B54C8F /* HomeViewCell.swift */; };
-		FC8085CA23B2415300B54C8F /* HomeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085C723B2415300B54C8F /* HomeViewCell.swift */; };
 		FC8085CB23B2415D00B54C8F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80858623B1F9B900B54C8F /* HomeViewController.swift */; };
 		FC8085CC23B2415D00B54C8F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC80858623B1F9B900B54C8F /* HomeViewController.swift */; };
 		FC8085CF23B2456A00B54C8F /* AddNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */; };
@@ -55,6 +67,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FC454CE123B92D67004D6C1A /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
+		FC454CE823B92EA1004D6C1A /* FilterViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewPresenter.swift; sourceTree = "<group>"; };
+		FC454CEC23B93DAF004D6C1A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		FC454CED23B93DAF004D6C1A /* TagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagView.swift; sourceTree = "<group>"; };
+		FC454CF423B93DDB004D6C1A /* HomeViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewCell.swift; sourceTree = "<group>"; };
 		FC80857F23B1F9B900B54C8F /* Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC80858223B1F9B900B54C8F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FC80858423B1F9B900B54C8F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -72,7 +89,6 @@
 		FC8085B923B2014000B54C8F /* HomeViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewPresenter.swift; sourceTree = "<group>"; };
 		FC8085BE23B201FC00B54C8F /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		FC8085C323B2142900B54C8F /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		FC8085C723B2415300B54C8F /* HomeViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewCell.swift; sourceTree = "<group>"; };
 		FC8085CE23B2456A00B54C8F /* AddNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteViewController.swift; sourceTree = "<group>"; };
 		FC8085E223B4C54100B54C8F /* AddNotesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNotesPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,6 +118,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FC454CE523B92E76004D6C1A /* FilterView */ = {
+			isa = PBXGroup;
+			children = (
+				FC454CE723B92E83004D6C1A /* Presenter */,
+				FC454CE623B92E7D004D6C1A /* View */,
+			);
+			path = FilterView;
+			sourceTree = "<group>";
+		};
+		FC454CE623B92E7D004D6C1A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FC454CE123B92D67004D6C1A /* FilterViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		FC454CE723B92E83004D6C1A /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				FC454CE823B92EA1004D6C1A /* FilterViewPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
 		FC80857623B1F9B900B54C8F = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +166,7 @@
 		FC80858123B1F9B900B54C8F /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				FC454CE523B92E76004D6C1A /* FilterView */,
 				FC8085CD23B2454300B54C8F /* Add Note */,
 				FC8085C223B2141300B54C8F /* Constants */,
 				FC8085BD23B201E800B54C8F /* Common */,
@@ -169,7 +211,7 @@
 		FC8085B623B2011100B54C8F /* View */ = {
 			isa = PBXGroup;
 			children = (
-				FC8085C723B2415300B54C8F /* HomeViewCell.swift */,
+				FC454CF423B93DDB004D6C1A /* HomeViewCell.swift */,
 				FC80858623B1F9B900B54C8F /* HomeViewController.swift */,
 			);
 			path = View;
@@ -186,6 +228,8 @@
 		FC8085BD23B201E800B54C8F /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				FC454CEC23B93DAF004D6C1A /* Extensions.swift */,
+				FC454CED23B93DAF004D6C1A /* TagView.swift */,
 				FC8085BE23B201FC00B54C8F /* BaseViewController.swift */,
 			);
 			path = Common;
@@ -355,13 +399,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC8085E323B4C54100B54C8F /* AddNotesPresenter.swift in Sources */,
+				FC454CE923B92EA1004D6C1A /* FilterViewPresenter.swift in Sources */,
 				FC80858723B1F9B900B54C8F /* HomeViewController.swift in Sources */,
-				FC8085C823B2415300B54C8F /* HomeViewCell.swift in Sources */,
 				FC8085CF23B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
 				FC80858323B1F9B900B54C8F /* AppDelegate.swift in Sources */,
+				FC454CE223B92D67004D6C1A /* FilterViewController.swift in Sources */,
 				FC80858523B1F9B900B54C8F /* SceneDelegate.swift in Sources */,
+				FC454CEE23B93DB0004D6C1A /* Extensions.swift in Sources */,
 				FC80858D23B1F9B900B54C8F /* Notes.xcdatamodeld in Sources */,
+				FC454CF523B93DDB004D6C1A /* HomeViewCell.swift in Sources */,
 				FC8085C423B2142900B54C8F /* Constants.swift in Sources */,
+				FC454CF123B93DB0004D6C1A /* TagView.swift in Sources */,
 				FC8085BA23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
 				FC8085BF23B201FC00B54C8F /* BaseViewController.swift in Sources */,
 			);
@@ -374,11 +422,15 @@
 				FC8085D023B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
 				FC8085BB23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
 				FC80859D23B1F9C000B54C8F /* NotesTests.swift in Sources */,
+				FC454CE323B92D67004D6C1A /* FilterViewController.swift in Sources */,
 				FC8085E423B4C54100B54C8F /* AddNotesPresenter.swift in Sources */,
-				FC8085C923B2415300B54C8F /* HomeViewCell.swift in Sources */,
+				FC454CF623B93DDB004D6C1A /* HomeViewCell.swift in Sources */,
+				FC454CEA23B92EA1004D6C1A /* FilterViewPresenter.swift in Sources */,
 				FC8085C023B201FC00B54C8F /* BaseViewController.swift in Sources */,
 				FC8085C523B2142900B54C8F /* Constants.swift in Sources */,
+				FC454CEF23B93DB0004D6C1A /* Extensions.swift in Sources */,
 				FC8085CC23B2415D00B54C8F /* HomeViewController.swift in Sources */,
+				FC454CF223B93DB0004D6C1A /* TagView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,11 +441,15 @@
 				FC8085D123B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
 				FC8085BC23B2014000B54C8F /* HomeViewPresenter.swift in Sources */,
 				FC8085A823B1F9C000B54C8F /* NotesUITests.swift in Sources */,
+				FC454CE423B92D67004D6C1A /* FilterViewController.swift in Sources */,
 				FC8085E523B4C54100B54C8F /* AddNotesPresenter.swift in Sources */,
-				FC8085CA23B2415300B54C8F /* HomeViewCell.swift in Sources */,
+				FC454CF723B93DDB004D6C1A /* HomeViewCell.swift in Sources */,
+				FC454CEB23B92EA1004D6C1A /* FilterViewPresenter.swift in Sources */,
 				FC8085C123B201FC00B54C8F /* BaseViewController.swift in Sources */,
 				FC8085C623B2142900B54C8F /* Constants.swift in Sources */,
+				FC454CF023B93DB0004D6C1A /* Extensions.swift in Sources */,
 				FC8085CB23B2415D00B54C8F /* HomeViewController.swift in Sources */,
+				FC454CF323B93DB0004D6C1A /* TagView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

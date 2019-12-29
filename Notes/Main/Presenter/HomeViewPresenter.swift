@@ -17,7 +17,6 @@ protocol HomeView: class {
 class HomeViewPresenter {
     
     weak var view: HomeView?
-    private var notesCount = 0
     private var list: [Notes] = []
     private var filteredList: [Notes] = []
     var managedContext: NSManagedObjectContext?
@@ -38,7 +37,6 @@ class HomeViewPresenter {
 extension HomeViewPresenter {
     
     func readNotesFromCoreData() {
-        
         var returnedNotes = [Notes]()
         
         guard let context = managedContext else {
@@ -55,15 +53,17 @@ extension HomeViewPresenter {
                 returnedNotes.append(noteManagedObjectRead)
             }
         } catch let error as NSError {
-            // TODO error handling
             print("Could not read. \(error), \(error.userInfo)")
         }
 
         list.removeAll()
         filteredList.removeAll()
-
+        
         let temp = returnedNotes.sorted(by: { (m1, m2) -> Bool in
-            m1.date_modified! > m2.date_modified!
+            if let m1Date = m1.dateModified, let m2Date = m2.dateModified {
+                return m1Date > m2Date
+            }
+            return false
         })
 
         filteredList = temp
@@ -89,9 +89,7 @@ extension HomeViewPresenter {
         }
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
-        
         let noteIdPredicate = NSPredicate(format: "id = %@", note.id! as CVarArg)
-        
         fetchRequest.predicate = noteIdPredicate
         
         do {
@@ -125,10 +123,29 @@ extension HomeViewPresenter {
         else {
             filteredList.removeAll()
             let temp = list.sorted(by: { (m1, m2) -> Bool in
-                m1.date_modified! > m2.date_modified!
+                m1.dateModified! > m2.dateModified!
             })
             filteredList.append(contentsOf: temp)
         }
         view?.reloadData()
+    }
+    
+    func filterNotes(tags: String, fromDate: Date, toDate: Date) {
+//        var searchQuery = tags
+//        searchQuery = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+//
+//        let dateRange = fromDate ... toDate
+        
+//        if (searchQuery.isEmpty) {
+//            let searchedList = list.filter {
+//                return dateRange.contains($0.dateModified)
+//            }
+//            filteredList.removeAll()
+//            filteredList.append(contentsOf: searchedList)
+//        } else {
+//            let searchedList = list.filter {
+//                return searchQuery.contains($0.tag?.tag)
+//            }
+//        }
     }
 }

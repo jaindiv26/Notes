@@ -10,6 +10,10 @@ import Foundation
 import UIKit
 import CoreData
 
+protocol FilterViewDelegate: class {
+    func applyFilter(tags: String, fromDate: Date, toDate: Date)
+}
+
 class HomeViewController: BaseViewController {
     
     lazy var presenter = HomeViewPresenter(with: self)
@@ -18,8 +22,17 @@ class HomeViewController: BaseViewController {
         let searchBar = UISearchBar.init()
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.delegate = self
-        searchBar.backgroundColor = .systemBackground
+        searchBar.backgroundColor = .clear
+        searchBar.barTintColor = .clear
+        searchBar.placeholder = "Search..."
         return searchBar
+    }()
+    
+    private lazy var filterButton: UIButton = {
+        let view = UIButton.init(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.setImage(UIImage(systemName: "plus"), for: .normal)
+        return view
     }()
     
     public lazy var tableView: UITableView = {
@@ -49,24 +62,39 @@ class HomeViewController: BaseViewController {
         presenter.readNotesFromCoreData()
     }
 }
-
 extension HomeViewController {
     
     private func setSearchBar() {
+        guard let safeAreaGuide = safeAreaGuide else {
+            return
+        }
+        view.addSubview(filterButton)
+        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        filterButton.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
+        
         view.addSubview(searchBar)
-        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        searchBar.topAnchor.constraint(equalTo: safeAreaGuide!.topAnchor).isActive = true
-        searchBar.heightAnchor.constraint(equalToConstant: 37).isActive = true
+        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.sidePadding/2).isActive = true
+        searchBar.trailingAnchor.constraint(equalTo: filterButton.leadingAnchor, constant: -UIConstants.sidePadding/2).isActive = true
+        searchBar.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor).isActive = true
+        
+        filterButton.centerYAnchor.constraint(equalTo: searchBar.centerYAnchor).isActive = true
+    }
+    
+    @objc func didTapFilterButton() {
+        let nav = UINavigationController(rootViewController: FilterViewController.init(delegate: self))
+        self.navigationController?.present(nav, animated: true, completion: nil)
     }
     
     private func setTableView() {
+        guard let safeAreaGuide = safeAreaGuide else {
+            return
+        }
         view.addSubview(tableView)
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor,
-                                       constant: UIConstants.verticalPadding).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: safeAreaGuide!.bottomAnchor).isActive = true
+                                       constant: UIConstants.betweenPadding).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor).isActive = true
         tableView.register(HomeViewCell.self,
                            forCellReuseIdentifier: HomeViewCell.self.description())
     }
@@ -149,5 +177,12 @@ extension HomeViewController: UISearchBarDelegate {
         presenter.doSearch(forQuery: searchBar.text)
     }
     
+}
+
+extension HomeViewController: FilterViewDelegate {
+    
+    func applyFilter(tags: String, fromDate: Date, toDate: Date) {
+        presenter.filterNotes(tags: tags, fromDate: fromDate, toDate: toDate)
+    }
 }
 

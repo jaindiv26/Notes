@@ -22,6 +22,7 @@ struct UIConstants {
     public static let buttonHeight: CGFloat = 44
     public static let cornerRadius: CGFloat = 8
     public static let iconSize: CGSize = .init(width: 24, height: 24)
+    public static let pickerHeight: CGFloat = 72
     
     enum Image: String {
         case feedOutline = "feed_outline"

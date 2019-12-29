@@ -8,14 +8,32 @@
 
 import Foundation
 import UIKit
-import CoreData
 
 class HomeViewCell: UITableViewCell {
+    
+    private lazy var containerView: UIView = {
+        let view = UIView.init()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray6
+        view.clipsToBounds = true
+        view.layer.cornerRadius = UIConstants.cornerRadius
+        return view
+    }()
     
     private lazy var titleLabel: UILabel = {
         let view = UILabel.init(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        view.numberOfLines = 1
+        return view
+    }()
+    
+    private lazy var dateLabel: UILabel = {
+        let view = UILabel.init(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        view.numberOfLines = 1
+        view.textColor = UIColor.systemGray2
         return view
     }()
     
@@ -23,17 +41,16 @@ class HomeViewCell: UITableViewCell {
         let view = UILabel.init(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        view.numberOfLines = 2
+        view.textColor = UIColor.systemGray
         return view
     }()
     
-    private lazy var tagLabel: UILabel = {
-        let view = UILabel.init(frame: CGRect.zero)
+    private lazy var tagView: TagView = {
+        let view = TagView.init(frame: .zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         return view
     }()
-    
-    private let cellSeperator = UIView.init(frame: CGRect.zero)
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -52,38 +69,47 @@ class HomeViewCell: UITableViewCell {
     private func createViews() {
         selectionStyle = .none
         
-        contentView.addSubview(titleLabel)
-        titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
-        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
-        titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UIConstants.verticalPadding).isActive = true
+        contentView.addSubview(containerView)
+        containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        containerView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
         
-        contentView.addSubview(tagLabel)
-        tagLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
-        tagLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
-        tagLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        containerView.addSubview(dateLabel)
+        dateLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        dateLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: UIConstants.verticalPadding).isActive = true
+        dateLabel.setContentHuggingPriority(.required, for: .horizontal)
+        dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
-        contentView.addSubview(descriptionLabel)
-        descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
-        descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: tagLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        containerView.addSubview(titleLabel)
+        titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: dateLabel.leadingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: dateLabel.topAnchor).isActive = true
         
-        cellSeperator.backgroundColor = .systemGray2
-        cellSeperator.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(cellSeperator)
-        cellSeperator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
-                                               constant: UIConstants.sidePadding).isActive = true
-        cellSeperator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                constant: -UIConstants.sidePadding).isActive = true
-        cellSeperator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        cellSeperator.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor,
-                                           constant: UIConstants.verticalPadding).isActive = true
-        cellSeperator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        containerView.addSubview(descriptionLabel)
+        descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: UIConstants.betweenPadding/2).isActive = true
+        
+        containerView.addSubview(tagView)
+        tagView.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
+        tagView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: UIConstants.betweenPadding).isActive = true
+        tagView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
     }
     
     func setData(modal: Notes) {
         titleLabel.text = modal.title
-        descriptionLabel.text = modal.note_description
-        tagLabel.text = modal.tag?.tag
+        descriptionLabel.text = modal.noteDescription
+        dateLabel.text = getNoteDisplayDate(date: modal.dateCreated!)
+        tagView.tagLabel.text = modal.tag?.tag
+        let randomColor = UIColor.random
+        let colorString: String = randomColor.toHex ?? "000000"
+        tagView.backgroundColor = UIColor.init(hex: colorString)
     }
     
+    private func getNoteDisplayDate(date: Date) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd, yyyy"
+        return dateFormatter.string(from: date)
+    }
 }
