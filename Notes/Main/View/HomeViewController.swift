@@ -14,6 +14,14 @@ class HomeViewController: BaseViewController {
     
     lazy var presenter = HomeViewPresenter(with: self)
     
+    public lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar.init()
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.delegate = self
+        searchBar.backgroundColor = .systemBackground
+        return searchBar
+    }()
+    
     public lazy var tableView: UITableView = {
         let tableView = UITableView.init(frame: CGRect.zero)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -22,6 +30,9 @@ class HomeViewController: BaseViewController {
         tableView.estimatedRowHeight = 20.0
         tableView.rowHeight = UITableView.automaticDimension
         tableView.keyboardDismissMode = .onDrag
+        tableView.backgroundColor = .systemBackground
+        tableView.delegate = self
+        tableView.dataSource = self
         return tableView
     }()
     
@@ -30,6 +41,7 @@ class HomeViewController: BaseViewController {
         self.view.backgroundColor = .systemBackground
         
         initNavigationBar()
+        setSearchBar()
         setTableView()
     }
     
@@ -40,18 +52,23 @@ class HomeViewController: BaseViewController {
 
 extension HomeViewController {
     
+    private func setSearchBar() {
+        view.addSubview(searchBar)
+        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        searchBar.topAnchor.constraint(equalTo: safeAreaGuide!.topAnchor).isActive = true
+        searchBar.heightAnchor.constraint(equalToConstant: 37).isActive = true
+    }
+    
     private func setTableView() {
         view.addSubview(tableView)
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        tableView.topAnchor.constraint(equalTo: safeAreaGuide!.topAnchor,
+        tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor,
                                        constant: UIConstants.verticalPadding).isActive = true
         tableView.bottomAnchor.constraint(equalTo: safeAreaGuide!.bottomAnchor).isActive = true
-        tableView.backgroundColor = .systemBackground
         tableView.register(HomeViewCell.self,
                            forCellReuseIdentifier: HomeViewCell.self.description())
-        tableView.delegate = self
-        tableView.dataSource = self
     }
     
     private func initNavigationBar() {
@@ -109,5 +126,28 @@ extension HomeViewController: UITableViewDelegate {
             navigationController?.pushViewController(AddNoteViewController.init(modal: item), animated: true)
         }
     }
+}
+
+extension HomeViewController: UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = true
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.text = nil
+        searchBar.resignFirstResponder()
+        presenter.doSearch(forQuery: nil)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        presenter.doSearch(forQuery: searchBar.text)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        presenter.doSearch(forQuery: searchBar.text)
+    }
+    
 }
 

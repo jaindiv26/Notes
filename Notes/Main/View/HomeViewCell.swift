@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class HomeViewCell: UITableViewCell {
     
@@ -19,6 +20,13 @@ class HomeViewCell: UITableViewCell {
     }()
     
     private lazy var descriptionLabel: UILabel = {
+        let view = UILabel.init(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        return view
+    }()
+    
+    private lazy var tagLabel: UILabel = {
         let view = UILabel.init(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
@@ -38,6 +46,7 @@ class HomeViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         titleLabel.text = ""
+        descriptionLabel.text = ""
     }
     
     private func createViews() {
@@ -48,10 +57,15 @@ class HomeViewCell: UITableViewCell {
         titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
         titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UIConstants.verticalPadding).isActive = true
         
+        contentView.addSubview(tagLabel)
+        tagLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
+        tagLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
+        tagLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        
         contentView.addSubview(descriptionLabel)
         descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: tagLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
         
         cellSeperator.backgroundColor = .systemGray2
         cellSeperator.translatesAutoresizingMaskIntoConstraints = false
@@ -66,9 +80,10 @@ class HomeViewCell: UITableViewCell {
         cellSeperator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
     }
     
-    func setData(modal: NoteModal) {
-        titleLabel.text = modal.noteTitle
-        descriptionLabel.text = modal.noteDescription
+    func setData(modal: Notes) {
+        titleLabel.text = modal.title
+        descriptionLabel.text = modal.note_description
+        tagLabel.text = modal.tag?.tag
     }
     
 }

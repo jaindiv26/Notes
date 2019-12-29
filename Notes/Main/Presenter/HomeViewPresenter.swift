@@ -18,7 +18,8 @@ class HomeViewPresenter {
     
     weak var view: HomeView?
     private var notesCount = 0
-    private var notesList: [NoteModal] = []
+    private var list: [Notes] = []
+    private var filteredList: [Notes] = []
     var managedContext: NSManagedObjectContext?
     
     init(with view: HomeView) {
@@ -28,7 +29,7 @@ class HomeViewPresenter {
             UIApplication.shared.delegate as? AppDelegate else {
                 return
         }
-
+        
         managedContext = appDelegate.persistentContainer.viewContext
         readNotesFromCoreData()
     }
@@ -38,55 +39,58 @@ extension HomeViewPresenter {
     
     func readNotesFromCoreData() {
         
-        var returnedNotes = [NoteModal]()
+        var returnedNotes = [Notes]()
         
         guard let context = managedContext else {
             return
         }
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
-        fetchRequest.predicate = nil
+        let notesFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
+        notesFetchRequest.predicate = nil
         
         do {
-            let fetchedNotesFromCoreData = try context.fetch(fetchRequest)
+            let fetchedNotesFromCoreData = try context.fetch(notesFetchRequest)
             fetchedNotesFromCoreData.forEach { (fetchRequestResult) in
-                let noteManagedObjectRead = fetchRequestResult as! NSManagedObject
-                returnedNotes.append(NoteModal.init(
-                    noteId: noteManagedObjectRead.value(forKey: "id") as! UUID,
-                    noteTitle: noteManagedObjectRead.value(forKey: "title") as! String,
-                    noteDescription: noteManagedObjectRead.value(forKey: "note_description") as! String,
-                    dateCreated: noteManagedObjectRead.value(forKey: "date_created")  as! Date,
-                    dateModified: noteManagedObjectRead.value(forKey: "date_modified") as! Date))
+                let noteManagedObjectRead = fetchRequestResult as! Notes
+                returnedNotes.append(noteManagedObjectRead)
             }
         } catch let error as NSError {
             // TODO error handling
             print("Could not read. \(error), \(error.userInfo)")
         }
-        
-        notesList.removeAll()
-        notesList = returnedNotes
+
+        list.removeAll()
+        filteredList.removeAll()
+
+        let temp = returnedNotes.sorted(by: { (m1, m2) -> Bool in
+            m1.date_modified! > m2.date_modified!
+        })
+
+        filteredList = temp
+        list = temp
+
         view?.reloadData()
     }
     
     func getCount() -> Int {
-        notesList.count
+        filteredList.count
     }
     
-    func getItem(forRow row:Int) -> NoteModal? {
-        if row < 0 || row >= notesList.count {
+    func getItem(forRow row:Int) -> Notes? {
+        if row < 0 || row >= list.count {
             return nil
         }
-        return notesList[row]
+        return filteredList[row]
     }
     
-    func deleteNote(note: NoteModal, index: Int) {
+    func deleteNote(note: Notes, index: Int) {
         guard let context = managedContext else {
             return
         }
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
         
-        let noteIdPredicate = NSPredicate(format: "id = %@", note.noteId as CVarArg)
+        let noteIdPredicate = NSPredicate(format: "id = %@", note.id! as CVarArg)
         
         fetchRequest.predicate = noteIdPredicate
         
@@ -97,12 +101,34 @@ extension HomeViewPresenter {
             
             do {
                 try context.save()
-                notesList.remove(at: index)
+                list.remove(at: index)
+                filteredList.remove(at: index)
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
         } catch let error as NSError {
             print("Could not change. \(error), \(error.userInfo)")
         }
+    }
+    
+    func doSearch(forQuery query: String?) {
+        var searchQuery = query
+        searchQuery = searchQuery?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if let searchQuery = searchQuery, searchQuery.count >= Constants.searchMinCharacter {
+            let searchedList = list.filter {
+                let searchKey = $0.title!.lowercased()
+                return searchKey.contains(searchQuery)
+            }
+            filteredList.removeAll()
+            filteredList.append(contentsOf: searchedList)
+        }
+        else {
+            filteredList.removeAll()
+            let temp = list.sorted(by: { (m1, m2) -> Bool in
+                m1.date_modified! > m2.date_modified!
+            })
+            filteredList.append(contentsOf: temp)
+        }
+        view?.reloadData()
     }
 }

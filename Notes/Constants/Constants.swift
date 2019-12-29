@@ -9,8 +9,12 @@
 import Foundation
 import UIKit
 
-struct UIConstants {
+struct Constants {
+    public static let searchMinCharacter = 2
+}
 
+struct UIConstants {
+    
     public static let sidePadding: CGFloat = 20
     public static let verticalPadding: CGFloat = 12
     public static let betweenPadding: CGFloat = 4

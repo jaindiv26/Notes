@@ -12,7 +12,7 @@ import CoreData
 
 class AddNoteViewController: BaseViewController {
     
-    private var noteModal: NoteModal?
+    private var noteModal: Notes?
     
     private lazy var presenter = AddNotesPresenter(with: self)
     
@@ -22,6 +22,22 @@ class AddNoteViewController: BaseViewController {
         view.text = "Enter your title here."
         view.textColor = UIColor.lightGray
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        return view
+    }()
+    
+    private lazy var tagsLabel: UILabel = {
+        let view = UILabel(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Tags"
+        view.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+        return view
+    }()
+    
+    private lazy var tagsPickerView: UIPickerView = {
+        let view = UIPickerView(frame: CGRect.zero)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
         return view
     }()
     
@@ -44,11 +60,15 @@ class AddNoteViewController: BaseViewController {
     
     private var shouldUpdate = false
     
+    private var tags: [String] = ["Red", "Green", "Blue", "Gray"]
+    
+    private var selectedTag: String = "Red"
+    
     init() {
         super.init(nibName: nil, bundle: nil)
     }
     
-    init(modal: NoteModal) {
+    init(modal: Notes) {
         super.init(nibName: nil, bundle: nil)
         noteModal = modal
         shouldUpdate = true
@@ -82,15 +102,9 @@ private extension AddNoteViewController {
         }
         
         if shouldUpdate {
-            presenter.saveNote(note: NoteModal(
-                noteId: noteModal!.noteId,
-                noteTitle: data.title,
-                noteDescription: data.description,
-                dateCreated: noteModal!.dateCreated,
-                dateModified: Date())
-            )
+            presenter.saveNote(id: noteModal!.id!, title: data.title, description: data.description, tags: "")
         } else {
-            presenter.addNewNote(note: NoteModal(noteTitle: data.title, noteDescription: data.description))
+            presenter.addNewNote(title: data.title, description: data.description, tags: selectedTag)
         }
     }
     
@@ -98,8 +112,8 @@ private extension AddNoteViewController {
         guard let noteData = noteModal else {
             return
         }
-        titleTextField.text = noteData.noteTitle
-        descriptionTextView.text = noteData.noteDescription
+        titleTextField.text = noteData.title
+        descriptionTextView.text = noteData.note_description
         shouldUpdate = true
     }
     
@@ -124,9 +138,21 @@ private extension AddNoteViewController {
         titleTextField.heightAnchor.constraint(equalToConstant: UIConstants.buttonHeight).isActive = true
         titleTextField.delegate = self
         
+        view.addSubview(tagsLabel)
+        tagsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        tagsLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        tagsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+        tagsLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight).isActive = true
+        
+        view.addSubview(tagsPickerView)
+        tagsPickerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        tagsPickerView.topAnchor.constraint(equalTo: tagsLabel.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        tagsPickerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+        tagsPickerView.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight).isActive = true
+        
         view.addSubview(descriptionLabel)
         descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: tagsPickerView.bottomAnchor, constant: UIConstants.verticalPadding).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
         descriptionLabel.heightAnchor.constraint(equalToConstant: UIConstants.labelHeight).isActive = true
         
@@ -175,4 +201,26 @@ extension AddNoteViewController: AddNotesView {
     func dismissView() {
         self.navigationController?.popViewController(animated: true)
     }
+}
+
+extension AddNoteViewController: UIPickerViewDelegate {
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return tags[row]
+    }
+}
+
+extension AddNoteViewController: UIPickerViewDataSource {
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return tags.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        selectedTag = tags[row]
+    }
+    
 }

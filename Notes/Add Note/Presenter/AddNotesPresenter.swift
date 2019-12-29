@@ -35,21 +35,27 @@ class AddNotesPresenter {
 
 extension AddNotesPresenter {
     
-    func addNewNote(note: NoteModal) {
+    func addNewNote(title: String, description: String, tags: String) {
         
         guard let context = managedContext else {
             return
         }
         
-        let entity = NSEntityDescription.entity(forEntityName: "Notes", in: context)!
+        let tagEntity = NSEntityDescription.entity(forEntityName: "Tag", in: context)!
+        let newTagsEntity = NSManagedObject(entity: tagEntity, insertInto: context)
         
-        let noteEntity = NSManagedObject(entity: entity, insertInto: context)
+        newTagsEntity.setValue(UUID(), forKey: "tagID")
+        newTagsEntity.setValue(tags, forKey: "tag")
         
-        noteEntity.setValue(note.noteId, forKey: "id")
-        noteEntity.setValue(note.noteTitle, forKey: "title")
-        noteEntity.setValue(note.noteDescription, forKey: "note_description")
-        noteEntity.setValue(note.dateCreated, forKey: "date_created")
-        noteEntity.setValue(note.dateModified, forKey: "date_modified")
+        let notesEntity = NSEntityDescription.entity(forEntityName: "Notes", in: context)!
+        let newNoteEntity = NSManagedObject(entity: notesEntity, insertInto: context)
+        
+        newNoteEntity.setValue(UUID(), forKey: "id")
+        newNoteEntity.setValue(title, forKey: "title")
+        newNoteEntity.setValue(description, forKey: "note_description")
+        newNoteEntity.setValue(Date(), forKey: "date_created")
+        newNoteEntity.setValue(Date(), forKey: "date_modified")
+        newNoteEntity.setValue(newTagsEntity, forKey: "tag")
         
         do {
             try context.save()
@@ -59,14 +65,14 @@ extension AddNotesPresenter {
         }
     }
     
-    func saveNote(note: NoteModal) {
+    func saveNote(id: UUID, title: String, description: String, tags: String) {
         guard let context = managedContext else {
             return
         }
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
         
-        let noteIdPredicate = NSPredicate(format: "id = %@", note.noteId as CVarArg)
+        let noteIdPredicate = NSPredicate(format: "id = %@", id as CVarArg)
         
         fetchRequest.predicate = noteIdPredicate
         
@@ -74,9 +80,10 @@ extension AddNotesPresenter {
             let fetchedNotesFromCoreData = try context.fetch(fetchRequest)
             let noteManagedObjectToBeChanged = fetchedNotesFromCoreData[0] as! NSManagedObject
             
-            noteManagedObjectToBeChanged.setValue(note.noteTitle, forKey: "title")
-            noteManagedObjectToBeChanged.setValue(note.noteDescription, forKey: "note_description")
+            noteManagedObjectToBeChanged.setValue(title, forKey: "title")
+            noteManagedObjectToBeChanged.setValue(description, forKey: "note_description")
             noteManagedObjectToBeChanged.setValue(Date(), forKey: "date_modified")
+            noteManagedObjectToBeChanged.setValue(tags, forKey: "tag")
             try context.save()
             view?.dismissView()
         } catch let error as NSError {

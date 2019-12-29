@@ -6,13 +6,15 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="note_description" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="tag" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Tag" inverseName="notes" inverseEntity="Tag"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="tag" optional="YES" attributeType="String"/>
         <attribute name="tagID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Notes" inverseName="tag" inverseEntity="Notes"/>
     </entity>
     <elements>
-        <element name="Notes" positionX="-322.74609375" positionY="-57.1796875" width="128" height="118"/>
-        <element name="Tag" positionX="-36" positionY="36" width="128" height="73"/>
+        <element name="Notes" positionX="-322.74609375" positionY="-57.1796875" width="128" height="133"/>
+        <element name="Tag" positionX="-36" positionY="36" width="128" height="88"/>
     </elements>
 </model>
