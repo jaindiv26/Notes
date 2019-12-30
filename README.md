@@ -16,9 +16,9 @@ Notes is an simple iOS app which can be used to store your class notes, TODO lis
 * Can view information about the Note (Title, Tags, Date/Time).
 * Can Filter on the basis of tags, date/time.
 * Search through notes.
-* Swipe right to left the delete the app.
+* Swipe right to left to the delete the app.
 * User can add/delete/update a note.
-* Add his own tags.
+* Add your own tags.
 * Uses core data to save the notes into the DB.
 
 # Screenshots
