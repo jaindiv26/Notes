@@ -53,14 +53,9 @@ extension UIColor {
         let r = Float(components[0])
         let g = Float(components[1])
         let b = Float(components[2])
-        var a = Float(1.0)
-
-        if components.count >= 4 {
-            a = Float(components[3])
-        }
 
         // Create Hex String
-        let hex = String(format: "%02lX%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255), lroundf(a * 255))
+        let hex = String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
 
         return hex
     }

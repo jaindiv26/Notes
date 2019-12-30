@@ -11,6 +11,11 @@ import UIKit
 
 struct Constants {
     public static let searchMinCharacter = 2
+    
+    enum DBTables: String {
+        case notes = "Notes"
+        case tag = "Tag"
+    }
 }
 
 struct UIConstants {
@@ -25,16 +30,7 @@ struct UIConstants {
     public static let pickerHeight: CGFloat = 72
     
     enum Image: String {
-        case feedOutline = "feed_outline"
-        case feedFilled = "feed_filled"
-        case bookmarkOutline = "bookmark_outline"
-        case bookmarkFilled = "bookmark_filled"
-        case profileOutline = "profile_outline"
-        case profileFilled = "profile_filled"
-        case shareOutline = "share_outline"
-        case google = "google_icon"
-        case app = "logo"
-        case bgLaunch = "launchScreen"
+        case filter = "filter"
     }
     
 }

@@ -19,7 +19,7 @@ class FilterViewPresenter {
     
     var view: FilterView?
     var managedContext: NSManagedObjectContext?
-    var tagsList: [String] = []
+    var tagsList: [Tag] = []
     
     init(with view: FilterView) {
         self.view = view
@@ -35,6 +35,15 @@ class FilterViewPresenter {
 
 extension FilterViewPresenter {
     
+    func getTagIndex(forId id: UUID) -> Int? {
+        for (index, tag) in tagsList.enumerated() {
+            if let tagId = tag.tagID, tagId == id {
+                return index
+            }
+        }
+        return nil
+    }
+    
     func getTagsFromDB() {
         tagsList.removeAll()
         
@@ -42,23 +51,23 @@ extension FilterViewPresenter {
             return
         }
         
-        let tagsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
+        let tagsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.DBTables.tag.rawValue)
         tagsFetchRequest.predicate = nil
         
         do {
             let fetchedTagsFromCoreData = try context.fetch(tagsFetchRequest)
             fetchedTagsFromCoreData.forEach { (fetchRequestResult) in
-                let tagManagedObjectRead = fetchRequestResult as! Tag
-                let item = tagManagedObjectRead.value(forKey: "tag") as! String
-                tagsList.append(item)
+                if let tagManagedObjectRead = fetchRequestResult as? Tag {
+                    tagsList.append(tagManagedObjectRead)
+                }
             }
             if (tagsList.count == 0) {
                 view?.hideTagsPickerView()
                 return
             }
             view?.reloadTagsPickerView()
-        } catch let error as NSError {
-            print("Could not read. \(error), \(error.userInfo)")
+        } catch {
+            print(error)
         }
     }
 

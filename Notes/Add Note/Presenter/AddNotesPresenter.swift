@@ -10,135 +10,139 @@ import Foundation
 import CoreData
 import UIKit
 
-protocol AddNotesView: class {
-    func dismissView()
+protocol AddNotesPresenterDelegate: class {
+    
+    func didAddNote(note: Notes)
+    
+    func didUpdateNote(note: Notes)
+    
     func didAddTag(atIndex index: Int)
+    
     func didFetchTags()
+    
     func hideTagsPickerView()
+    
+    func showErrorMessage(_ errorMessage: String?)
+    
 }
 
 class AddNotesPresenter {
     
-    weak var view: AddNotesView?
-    var managedContext: NSManagedObjectContext?
-    var tagsList: [String] = []
+    private weak var delegate: AddNotesPresenterDelegate?
+    private var managedContext: NSManagedObjectContext?
+    var tagsList: [Tag] = []
     
-    init(with view: AddNotesView) {
-        self.view = view
-        
-        guard let appDelegate =
-            UIApplication.shared.delegate as? AppDelegate else {
-                return
+    init(withDelegate delegate: AddNotesPresenterDelegate) {
+        self.delegate = delegate
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            managedContext = appDelegate.persistentContainer.viewContext
         }
-        
-        managedContext = appDelegate.persistentContainer.viewContext
     }
     
 }
 
 extension AddNotesPresenter {
     
-    func getTagsFromDB() {
+    func getTags() {
         tagsList.removeAll()
-        
         guard let context = managedContext else {
+            delegate?.hideTagsPickerView()
             return
         }
-        
-        let tagsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Tag")
-        tagsFetchRequest.predicate = nil
-        
-        do {
-            let fetchedTagsFromCoreData = try context.fetch(tagsFetchRequest)
-            fetchedTagsFromCoreData.forEach { (fetchRequestResult) in
-                let tagManagedObjectRead = fetchRequestResult as! Tag
-                let item = tagManagedObjectRead.value(forKey: "tag") as! String
-                tagsList.append(item)
-            }
-            if (tagsList.count == 0) {
-                view?.hideTagsPickerView()
-                return
-            }
-            view?.didFetchTags()
-        } catch let error as NSError {
-            print("Could not read. \(error), \(error.userInfo)")
+        tagsList.append(contentsOf: getTagsFromDB(managedContext: context))
+        if tagsList.isEmpty {
+            delegate?.hideTagsPickerView()
+            return
         }
+        delegate?.didFetchTags()
     }
     
-    func addTagIntoDB(tag: String) {
-        guard let context = managedContext else {
+    func didAddTag(tag: String) {
+        guard let context = managedContext,
+            let tagEntity = NSEntityDescription.insertNewObject(forEntityName: Constants.DBTables.tag.rawValue,
+                                                                into: context) as? Tag else {
+            delegate?.showErrorMessage(nil)
             return
         }
-        
-        let tagEntity = NSEntityDescription.entity(forEntityName: "Tag", in: context)!
-        let newTagsEntity = NSManagedObject(entity: tagEntity, insertInto: context)
-        
-        newTagsEntity.setValue(UUID(), forKey: "tagID")
-        newTagsEntity.setValue(tag, forKey: "tag")
-        newTagsEntity.setValue(UIColor.random.toHex, forKey: "colorHex")
-        
+        tagEntity.tag = tag
+        tagEntity.tagID = UUID()
+        tagEntity.colorHex = UIColor.random.toHex
         do {
             try context.save()
-            tagsList.append(tag)
-            view?.didAddTag(atIndex: tagsList.count - 1)
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
+            tagsList.append(tagEntity)
+            delegate?.didAddTag(atIndex: tagsList.count - 1)
+        } catch {
+            delegate?.showErrorMessage(error.localizedDescription)
+            print(error)
         }
     }
     
-    func addNewNote(title: String, description: String, tags: String) {
-        guard let context = managedContext else {
+    func addNewNote(title: String, description: String, tag: Tag?) {
+        guard let context = managedContext,
+            let notesEntity = NSEntityDescription.insertNewObject(forEntityName: Constants.DBTables.notes.rawValue,
+                                                                  into: context) as? Notes else {
+            delegate?.showErrorMessage(nil)
             return
         }
-        
-        let tagEntity = NSEntityDescription.entity(forEntityName: "Tag", in: context)!
-        let newTagsEntity = NSManagedObject(entity: tagEntity, insertInto: context)
-        
-        newTagsEntity.setValue(UUID(), forKey: "tagID")
-        newTagsEntity.setValue(tags, forKey: "tag")
-        
-        let notesEntity = NSEntityDescription.entity(forEntityName: "Notes", in: context)!
-        let newNoteEntity = NSManagedObject(entity: notesEntity, insertInto: context)
-        
-        newNoteEntity.setValue(UUID(), forKey: "id")
-        newNoteEntity.setValue(title, forKey: "title")
-        newNoteEntity.setValue(description, forKey: "noteDescription")
-        newNoteEntity.setValue(Date(), forKey: "dateCreated")
-        newNoteEntity.setValue(Date(), forKey: "dateModified")
-        newNoteEntity.setValue(newTagsEntity, forKey: "tag")
-        
+        notesEntity.id = UUID()
+        notesEntity.title = title
+        notesEntity.noteDescription = description
+        notesEntity.dateCreated = Date()
+        notesEntity.tag = tag
         do {
             try context.save()
-            view?.dismissView()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
+            delegate?.didAddNote(note: notesEntity)
+        } catch {
+            delegate?.showErrorMessage(error.localizedDescription)
+            print(error)
         }
     }
     
-    func saveNote(id: UUID, title: String, description: String, tags: String) {
+    func updateNote(forId id: UUID, title: String, description: String, tag: Tag?) {
         guard let context = managedContext else {
+            delegate?.showErrorMessage(nil)
             return
         }
-        
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Notes")
-        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.DBTables.notes.rawValue)
         let noteIdPredicate = NSPredicate(format: "id = %@", id as CVarArg)
-        
         fetchRequest.predicate = noteIdPredicate
-        
         do {
             let fetchedNotesFromCoreData = try context.fetch(fetchRequest)
-            let noteManagedObjectToBeChanged = fetchedNotesFromCoreData[0] as! NSManagedObject
-            
-            noteManagedObjectToBeChanged.setValue(title, forKey: "title")
-            noteManagedObjectToBeChanged.setValue(description, forKey: "noteDescription")
-            noteManagedObjectToBeChanged.setValue(Date(), forKey: "dateModified")
-            noteManagedObjectToBeChanged.setValue(tags, forKey: "tag")
+            guard let notesEntity = fetchedNotesFromCoreData[0] as? Notes else {
+                delegate?.showErrorMessage(nil)
+                return
+            }
+            notesEntity.title = title
+            notesEntity.noteDescription = description
+            notesEntity.dateModified = Date()
+            notesEntity.tag = tag
             try context.save()
-            view?.dismissView()
-        } catch let error as NSError {
-
-            print("Could not change. \(error), \(error.userInfo)")
+            delegate?.didUpdateNote(note: notesEntity)
+        } catch {
+            delegate?.showErrorMessage(error.localizedDescription)
+            print(error)
         }
     }
+}
+
+private extension AddNotesPresenter {
+    
+    func getTagsFromDB(managedContext: NSManagedObjectContext) -> [Tag] {
+        var tagsList: [Tag] = []
+        let tagsFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.DBTables.tag.rawValue)
+        tagsFetchRequest.predicate = nil
+        do {
+            let fetchedTagsFromCoreData = try managedContext.fetch(tagsFetchRequest)
+            fetchedTagsFromCoreData.forEach { (fetchRequestResult) in
+                if let tag = fetchRequestResult as? Tag {
+                    tagsList.append(tag)
+                }
+            }
+        } catch {
+            delegate?.showErrorMessage(error.localizedDescription)
+            print(error)
+        }
+        return tagsList
+    }
+    
 }

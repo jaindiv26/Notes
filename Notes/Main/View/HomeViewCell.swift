@@ -72,8 +72,8 @@ class HomeViewCell: UITableViewCell {
         contentView.addSubview(containerView)
         containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: UIConstants.sidePadding).isActive = true
         containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
-        containerView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UIConstants.verticalPadding).isActive = true
+        containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: UIConstants.verticalPadding/2).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -UIConstants.verticalPadding/2).isActive = true
         
         containerView.addSubview(dateLabel)
         dateLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
@@ -100,11 +100,23 @@ class HomeViewCell: UITableViewCell {
     func setData(modal: Notes) {
         titleLabel.text = modal.title
         descriptionLabel.text = modal.noteDescription
-        dateLabel.text = getNoteDisplayDate(date: modal.dateCreated!)
-        tagView.tagLabel.text = modal.tag?.tag
-        let randomColor = UIColor.random
-        let colorString: String = randomColor.toHex ?? "000000"
-        tagView.backgroundColor = UIColor.init(hex: colorString)
+        if let dateCreated = modal.dateCreated {
+            dateLabel.text = getNoteDisplayDate(date: dateCreated)
+        }
+        if let tagText = modal.tag?.tag, !tagText.isEmpty {
+            tagView.tagLabel.text = tagText
+            tagView.isHidden = false
+        }
+        else {
+            tagView.tagLabel.text = nil
+            tagView.isHidden = true
+        }
+        if let colorHex = modal.tag?.colorHex, !colorHex.isEmpty {
+            tagView.backgroundColor = UIColor.init(hex: colorHex)
+        }
+        else {
+            tagView.backgroundColor = TagView.Constants.defaultBgColor
+        }
     }
     
     private func getNoteDisplayDate(date: Date) -> String? {

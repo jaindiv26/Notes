@@ -10,12 +10,16 @@ import Foundation
 import UIKit
 import CoreData
 
-class AddNoteViewController: BaseViewController {
+protocol AddNoteViewControllerDelegate: class {
     
-    private var noteModal: Notes?
+    func addNoteViewController(_ addNoteViewController: AddNoteViewController, didAddNote note: Notes)
     
-    private lazy var presenter = AddNotesPresenter(with: self)
+    func addNoteViewController(_ addNoteViewController: AddNoteViewController, didUpdateNote note: Notes)
     
+}
+
+final class AddNoteViewController: BaseViewController {
+        
     private lazy var titleLabel: UILabel = {
         let view = UILabel(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -36,7 +40,7 @@ class AddNoteViewController: BaseViewController {
     private lazy var titleTextField: UITextField = {
         let view = UITextField(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = UIColor.white
+        view.textColor = UIColor.systemBackground
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         return view
     }()
@@ -93,16 +97,17 @@ class AddNoteViewController: BaseViewController {
     private lazy var descriptionTextView: UITextView = {
         let view = UITextView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = UIColor.white
+        view.textColor = UIColor.systemBackground
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         view.backgroundColor = .clear
         view.textContainerInset = UIEdgeInsets.zero
         return view
     }()
     
-    private var shouldUpdate = false
-    
-    private var selectedTag: String = "Red"
+    private var selectedTag: Tag?
+    private var noteModal: Notes?
+    public weak var delegate: AddNoteViewControllerDelegate?
+    private lazy var presenter = AddNotesPresenter(withDelegate: self)
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -111,7 +116,6 @@ class AddNoteViewController: BaseViewController {
     init(modal: Notes) {
         super.init(nibName: nil, bundle: nil)
         noteModal = modal
-        shouldUpdate = true
         self.initData()
     }
     
@@ -125,7 +129,7 @@ class AddNoteViewController: BaseViewController {
         view.backgroundColor = .systemBackground
         initNavigationBar()
         createViews()
-        presenter.getTagsFromDB()
+        presenter.getTags()
     }
 }
 
@@ -133,7 +137,9 @@ private extension AddNoteViewController {
     
     func initNavigationBar() {
         navigationItem.largeTitleDisplayMode = .never
-        let doneBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneEditingNote))
+        let doneBarButtonItem = UIBarButtonItem(title: "Done",
+                                                style: .done,
+                                                target: self, action: #selector(doneEditingNote))
         self.navigationItem.rightBarButtonItem  = doneBarButtonItem
     }
     
@@ -141,11 +147,15 @@ private extension AddNoteViewController {
         guard let data = isValidData() else {
             return
         }
-        
-        if shouldUpdate {
-            presenter.saveNote(id: noteModal!.id!, title: data.title, description: data.description, tags: selectedTag)
+        if let note = noteModal, let noteId = note.id {
+            presenter.updateNote(forId: noteId,
+                                 title: data.title,
+                                 description: data.description,
+                                 tag: selectedTag)
         } else {
-            presenter.addNewNote(title: data.title, description: data.description, tags: selectedTag)
+            presenter.addNewNote(title: data.title,
+                                 description: data.description,
+                                 tag: selectedTag)
         }
     }
     
@@ -155,7 +165,6 @@ private extension AddNoteViewController {
         }
         titleTextField.text = noteData.title
         descriptionTextView.text = noteData.noteDescription
-        shouldUpdate = true
     }
     
     func isValidData() -> (title: String, description: String)? {
@@ -163,11 +172,11 @@ private extension AddNoteViewController {
             showAlert(from: self, title: "Error", message: "Title cannot be empty.")
             return nil
         }
-        guard let decriptionText = descriptionTextView.text, !decriptionText.isEmpty else {
+        guard let descriptionText = descriptionTextView.text, !descriptionText.isEmpty else {
             showAlert(from: self, title: "Error", message: "Description cannot be empty.")
             return nil
         }
-        return (titleText, decriptionText)
+        return (titleText, descriptionText)
     }
     
     func createViews() {
@@ -240,14 +249,14 @@ private extension AddNoteViewController {
                 return
             }
             if let text = textField.text, !text.isEmpty {
-                self.presenter.addTagIntoDB(tag: text)
+                self.presenter.didAddTag(tag: text)
             }
         }))
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alertController.addTextField(configurationHandler: {(textField : UITextField!) -> Void in
+        alertController.addTextField(configurationHandler: {(textField : UITextField) -> Void in
             textField.placeholder = "Tag name"
         })
-        self.present(alertController, animated: true, completion: nil)
+        present(alertController, animated: true, completion: nil)
     }
 }
 
@@ -276,22 +285,30 @@ extension AddNoteViewController: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if titleTextField.text!.isEmpty {
+        if let text = titleTextField.text, text.isEmpty {
             titleTextField.text = "Enter your title here."
             titleTextField.textColor = UIColor.lightGray
         }
     }
 }
 
-extension AddNoteViewController: AddNotesView {
+extension AddNoteViewController: AddNotesPresenterDelegate {
     
-    func dismissView() {
-        self.navigationController?.popViewController(animated: true)
+    func didAddNote(note: Notes) {
+        delegate?.addNoteViewController(self, didAddNote: note)
+        navigationController?.popViewController(animated: true)
+    }
+    
+    func didUpdateNote(note: Notes) {
+        delegate?.addNoteViewController(self, didUpdateNote: note)
+        navigationController?.popViewController(animated: true)
     }
     
     func didAddTag(atIndex index: Int) {
+        tagsPickerView.isHidden = false
         tagsPickerView.reloadAllComponents()
-        tagsPickerView.selectRow(index, inComponent: 0, animated: true)
+        tagsPickerView.selectRow((index + 1), inComponent: 0, animated: true)
+        selectedTag = presenter.tagsList[index]
     }
     
     func didFetchTags() {
@@ -307,7 +324,12 @@ extension AddNoteViewController: AddNotesView {
 extension AddNoteViewController: UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return presenter.tagsList[row]
+        if row == 0 {
+            return "Select tag"
+        }
+        else {
+            return presenter.tagsList[row - 1].tag
+        }
     }
     
 }
@@ -319,11 +341,16 @@ extension AddNoteViewController: UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return presenter.tagsList.count
+        return 1 + presenter.tagsList.count
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        selectedTag = presenter.tagsList[row]
+        if row == 0 {
+            selectedTag = nil
+        }
+        else {
+            selectedTag = presenter.tagsList[row - 1]
+        }
     }
     
 }

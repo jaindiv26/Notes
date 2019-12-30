@@ -10,8 +10,13 @@ import UIKit
 
 class TagView: UIView {
     
-    private static let tagInternalSideSpacing: CGFloat = 4
-    private static let tagInternalVerticalSpacing: CGFloat = 2
+    struct Constants {
+        
+        static let tagInternalSideSpacing: CGFloat = 4
+        static let tagInternalVerticalSpacing: CGFloat = 2
+        public static let defaultBgColor: UIColor = UIColor.black
+        
+    }
     
     public lazy var tagLabel: UILabel = {
         let view = UILabel.init(frame: CGRect.zero)
@@ -36,10 +41,10 @@ class TagView: UIView {
         layer.cornerRadius = UIConstants.cornerRadius/2
         
         addSubview(tagLabel)
-        tagLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: TagView.tagInternalSideSpacing).isActive = true
-        tagLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -TagView.tagInternalSideSpacing).isActive = true
-        tagLabel.topAnchor.constraint(equalTo: topAnchor, constant: TagView.tagInternalVerticalSpacing).isActive = true
-        tagLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -TagView.tagInternalVerticalSpacing).isActive = true
+        tagLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.tagInternalSideSpacing).isActive = true
+        tagLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.tagInternalSideSpacing).isActive = true
+        tagLabel.topAnchor.constraint(equalTo: topAnchor, constant: Constants.tagInternalVerticalSpacing).isActive = true
+        tagLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Constants.tagInternalVerticalSpacing).isActive = true
     }
     
 }

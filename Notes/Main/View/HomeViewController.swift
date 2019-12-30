@@ -10,28 +10,23 @@ import Foundation
 import UIKit
 import CoreData
 
-protocol FilterViewDelegate: class {
-    func applyFilter(tags: String, fromDate: Date, toDate: Date)
-}
-
-class HomeViewController: BaseViewController {
-    
-    lazy var presenter = HomeViewPresenter(with: self)
+final class HomeViewController: BaseViewController {
     
     public lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar.init()
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.delegate = self
-        searchBar.backgroundColor = .clear
-        searchBar.barTintColor = .clear
+        searchBar.backgroundColor = .systemBackground
+        searchBar.barTintColor = .systemBackground
         searchBar.placeholder = "Search..."
+        searchBar.backgroundImage = UIImage()
         return searchBar
     }()
     
     private lazy var filterButton: UIButton = {
-        let view = UIButton.init(frame: CGRect.zero)
+        let view = UIButton.init(type: .system)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.setImage(UIImage(systemName: "plus"), for: .normal)
+        view.setImage(UIImage.init(named: UIConstants.Image.filter.rawValue), for: .normal)
         return view
     }()
     
@@ -40,7 +35,7 @@ class HomeViewController: BaseViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         tableView.separatorInset = .zero
-        tableView.estimatedRowHeight = 20.0
+        tableView.estimatedRowHeight = 44
         tableView.rowHeight = UITableView.automaticDimension
         tableView.keyboardDismissMode = .onDrag
         tableView.backgroundColor = .systemBackground
@@ -49,43 +44,54 @@ class HomeViewController: BaseViewController {
         return tableView
     }()
     
+    private lazy var presenter = HomeViewPresenter(withDelegate: self)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemBackground
         
         initNavigationBar()
         setSearchBar()
         setTableView()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        presenter.readNotesFromCoreData()
+        presenter.getData()
     }
 }
-extension HomeViewController {
+
+private extension HomeViewController {
     
-    private func setSearchBar() {
+    func initNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add,
+                                                            target: self,
+                                                            action: #selector(didTapAddButton))
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        navigationItem.title = "Notes"
+    }
+    
+    func setSearchBar() {
         guard let safeAreaGuide = safeAreaGuide else {
             return
         }
         view.addSubview(filterButton)
-        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UIConstants.sidePadding).isActive = true
-        filterButton.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
+        filterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                               constant: -UIConstants.sidePadding).isActive = true
+        filterButton.widthAnchor.constraint(equalToConstant: UIConstants.iconSize.width).isActive = true
+        filterButton.heightAnchor.constraint(equalToConstant: UIConstants.iconSize.height).isActive = true
+        filterButton.addTarget(self,
+                               action: #selector(didTapFilterButton),
+                               for: .touchUpInside)
         
         view.addSubview(searchBar)
-        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UIConstants.sidePadding/2).isActive = true
-        searchBar.trailingAnchor.constraint(equalTo: filterButton.leadingAnchor, constant: -UIConstants.sidePadding/2).isActive = true
+        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                           constant: UIConstants.sidePadding/2).isActive = true
+        searchBar.trailingAnchor.constraint(equalTo: filterButton.leadingAnchor,
+                                            constant: -UIConstants.sidePadding/2).isActive = true
         searchBar.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor).isActive = true
         
         filterButton.centerYAnchor.constraint(equalTo: searchBar.centerYAnchor).isActive = true
     }
     
-    @objc func didTapFilterButton() {
-        let nav = UINavigationController(rootViewController: FilterViewController.init(delegate: self))
-        self.navigationController?.present(nav, animated: true, completion: nil)
-    }
-    
-    private func setTableView() {
+    func setTableView() {
         guard let safeAreaGuide = safeAreaGuide else {
             return
         }
@@ -99,28 +105,37 @@ extension HomeViewController {
                            forCellReuseIdentifier: HomeViewCell.self.description())
     }
     
-    private func initNavigationBar() {
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didTapAddButton))
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationItem.largeTitleDisplayMode = .always
-        self.navigationItem.title = "Notes"
+    @objc func didTapFilterButton() {
+        let filterVC = FilterViewController.init()
+        filterVC.delegate = self
+        filterVC.appliedFilter = presenter.appliedFilter
+        let nav = UINavigationController(rootViewController: filterVC)
+        self.navigationController?.present(nav, animated: true, completion: nil)
     }
     
     @objc func didTapAddButton() {
-        navigationController?.pushViewController(AddNoteViewController(), animated: true)
+        let addNotesVC = AddNoteViewController()
+        addNotesVC.delegate = self
+        navigationController?.pushViewController(addNotesVC, animated: true)
     }
 }
 
-extension HomeViewController: HomeView {
-    func reloadData() {
+extension HomeViewController: HomeViewPresenterDelegate {
+    
+    func didLoadNotes() {
         tableView.reloadData()
     }
+    
+    func didDeleteNote(atIndex index: Int) {
+        tableView.deleteRows(at: [IndexPath.init(row: index, section: 0)], with: .automatic)
+    }
+    
 }
 
 extension HomeViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter.getCount()
+        return presenter.getNumberOfItems()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -134,13 +149,20 @@ extension HomeViewController: UITableViewDataSource {
     }
 }
 
+extension HomeViewController: UIScrollViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        searchBar.setShowsCancelButton(false, animated: true)
+    }
+    
+}
+
 extension HomeViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if (editingStyle == .delete) {
+        if editingStyle == .delete {
             if let item = presenter.getItem(forRow: indexPath.row) {
                 presenter.deleteNote(note: item, index: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .fade)
             }
         }
     }
@@ -151,7 +173,9 @@ extension HomeViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let item = presenter.getItem(forRow: indexPath.row) {
-            navigationController?.pushViewController(AddNoteViewController.init(modal: item), animated: true)
+            let addNotesVC = AddNoteViewController.init(modal: item)
+            addNotesVC.delegate = self
+            navigationController?.pushViewController(addNotesVC, animated: true)
         }
     }
 }
@@ -179,10 +203,25 @@ extension HomeViewController: UISearchBarDelegate {
     
 }
 
-extension HomeViewController: FilterViewDelegate {
+extension HomeViewController: FilterViewControllerDelegate {
     
-    func applyFilter(tags: String, fromDate: Date, toDate: Date) {
-        presenter.filterNotes(tags: tags, fromDate: fromDate, toDate: toDate)
+    func filterViewController(_ filterViewController:FilterViewController,
+                              didApplyFilterWith filter: Filter?) {
+        presenter.filterNotes(withAppliedFilter: filter)
     }
+
+}
+
+extension HomeViewController: AddNoteViewControllerDelegate {
+    
+    func addNoteViewController(_ addNoteViewController: AddNoteViewController, didAddNote note: Notes) {
+        presenter.getData()
+    }
+    
+    func addNoteViewController(_ addNoteViewController: AddNoteViewController, didUpdateNote note: Notes) {
+        presenter.getData()
+    }
+
+    
 }
 
