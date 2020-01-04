@@ -123,6 +123,15 @@ extension AddNotesPresenter {
             print(error)
         }
     }
+    
+    func getTagIndex(forId id: UUID) -> Int? {
+        for (index, tag) in tagsList.enumerated() {
+            if let tagId = tag.tagID, tagId == id {
+                return index
+            }
+        }
+        return nil
+    }
 }
 
 private extension AddNotesPresenter {

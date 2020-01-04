@@ -40,7 +40,6 @@ final class AddNoteViewController: BaseViewController {
     private lazy var titleTextField: UITextField = {
         let view = UITextField(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = UIColor.systemBackground
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         return view
     }()
@@ -97,7 +96,6 @@ final class AddNoteViewController: BaseViewController {
     private lazy var descriptionTextView: UITextView = {
         let view = UITextView(frame: CGRect.zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.textColor = UIColor.systemBackground
         view.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         view.backgroundColor = .clear
         view.textContainerInset = UIEdgeInsets.zero
@@ -314,6 +312,12 @@ extension AddNoteViewController: AddNotesPresenterDelegate {
     func didFetchTags() {
         tagsPickerView.reloadAllComponents()
         tagsPickerView.isHidden = false
+        if let tagId = noteModal?.tag?.tagID, let index = presenter.getTagIndex(forId: tagId) {
+            if index >= 0 && index < tagsPickerView.numberOfRows(inComponent: 0) {
+                tagsPickerView.selectRow((index + 1), inComponent: 0, animated: true)
+            }
+            selectedTag = noteModal?.tag
+        }
     }
     
     func hideTagsPickerView() {

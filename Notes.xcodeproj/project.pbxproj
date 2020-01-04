@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4833902B23B9BAB60059F902 /* OnBoardingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4833902A23B9BAB60059F902 /* OnBoardingHelper.swift */; };
 		FC454CE223B92D67004D6C1A /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE123B92D67004D6C1A /* FilterViewController.swift */; };
 		FC454CE323B92D67004D6C1A /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE123B92D67004D6C1A /* FilterViewController.swift */; };
 		FC454CE423B92D67004D6C1A /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC454CE123B92D67004D6C1A /* FilterViewController.swift */; };
@@ -68,6 +69,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4833902A23B9BAB60059F902 /* OnBoardingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingHelper.swift; sourceTree = "<group>"; };
 		FC454CE123B92D67004D6C1A /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		FC454CE823B92EA1004D6C1A /* FilterViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewPresenter.swift; sourceTree = "<group>"; };
 		FC454CEC23B93DAF004D6C1A /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				FC454CED23B93DAF004D6C1A /* TagView.swift */,
 				FC8085BE23B201FC00B54C8F /* BaseViewController.swift */,
 				FC5CFC2223B9B1AA00047C18 /* ToastView.swift */,
+				4833902A23B9BAB60059F902 /* OnBoardingHelper.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -405,6 +408,7 @@
 				FC454CE923B92EA1004D6C1A /* FilterViewPresenter.swift in Sources */,
 				FC80858723B1F9B900B54C8F /* HomeViewController.swift in Sources */,
 				FC8085CF23B2456A00B54C8F /* AddNoteViewController.swift in Sources */,
+				4833902B23B9BAB60059F902 /* OnBoardingHelper.swift in Sources */,
 				FC5CFC2323B9B1AA00047C18 /* ToastView.swift in Sources */,
 				FC80858323B1F9B900B54C8F /* AppDelegate.swift in Sources */,
 				FC454CE223B92D67004D6C1A /* FilterViewController.swift in Sources */,

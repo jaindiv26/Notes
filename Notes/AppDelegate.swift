@@ -54,6 +54,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                  */
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
+            if UserDefaults.standard.value(forKey: Constants.PrefKeys.isFirstLaunch.rawValue) == nil {
+                UserDefaults.standard.set(true, forKey: Constants.PrefKeys.isFirstLaunch.rawValue)
+                let helper = OnBoardingHelper.init()
+                helper.addOnBoardingData()
+            }
         })
         return container
     }()

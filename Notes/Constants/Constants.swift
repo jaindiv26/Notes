@@ -16,6 +16,10 @@ struct Constants {
         case notes = "Notes"
         case tag = "Tag"
     }
+    
+    enum PrefKeys: String {
+        case isFirstLaunch = "isFirstLaunch"
+    }
 }
 
 struct UIConstants {
